@@ -51,6 +51,9 @@ type Config struct {
 
 	// Prefetching is true if the EVM is used for prefetching.
 	Prefetching bool
+
+	// Additional EIPS that are to be enabled
+	ExtraEips []int
 }
 
 // keccakState wraps sha3.state. In addition to the usual hash methods, it also supports
@@ -84,7 +87,21 @@ func NewEVMInterpreter(evm *EVM, cfg *Config) *Interpreter {
 	// the jump table was initialised. If it was not
 	// we'll set the default jump table.
 	if !cfg.JumpTable[STOP].valid {
-		cfg.JumpTable = ConstantinopleInstructionSet
+		var jt JumpTable
+		switch {
+		case evm.chainRules.IsIstanbul:
+			jt = IstanbulInstructionSet
+		default:
+			jt = ConstantinopleInstructionSet
+		}
+		for i, eip := range cfg.ExtraEips {
+			if err := EnableEIP(eip, &jt); err != nil {
+				// Disable it, so caller can check if it's activated or not
+				cfg.ExtraEips = append(cfg.ExtraEips[:i], cfg.ExtraEips[i+1:]...)
+				logger.Error("EIP activation failed", "eip", eip, "error", err)
+			}
+		}
+		cfg.JumpTable = jt
 	}
 
 	return &Interpreter{
