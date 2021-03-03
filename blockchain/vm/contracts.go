@@ -62,6 +62,7 @@ type PrecompiledContract interface {
 	Run(input []byte, contract *Contract, evm *EVM) ([]byte, error)
 }
 
+// THE ADDRESS WILL BE CHANGED.
 // PrecompiledContractsConstantinople contains the default set of pre-compiled Klaytn
 // contracts based on Ethereum Constantinople.
 var PrecompiledContractsConstantinople = map[common.Address]PrecompiledContract{
@@ -78,6 +79,7 @@ var PrecompiledContractsConstantinople = map[common.Address]PrecompiledContract{
 	common.BytesToAddress([]byte{11}): &validateSender{},
 }
 
+// CAUTIOUS. DO NOT USE 0x3FD, 0x3FE, 0x3FF ADDRESSES BEFORE ISTANBUL CHANGE!!
 // TODO-IstanbulCompatible: add blake2b and reprice bn_128 precompiled contract
 // PrecompiledContractsIstanbul contains the default set of pre-compiled Klaytn
 // contracts based on Ethereum Istanbul.

@@ -171,6 +171,7 @@ type CodeFormat uint8
 
 const (
 	CodeFormatEVM CodeFormat = iota
+	CodeFormatEVM2
 	CodeFormatLast
 )
 
@@ -178,6 +179,8 @@ func (t CodeFormat) String() string {
 	switch t {
 	case CodeFormatEVM:
 		return "CodeFormatEVM"
+	case CodeFormatEVM2:
+		return "CodeFormatEVM2"
 	}
 
 	return "UndefinedCodeFormat"
