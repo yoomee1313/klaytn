@@ -95,10 +95,11 @@ var (
 	// This configuration is intentionally not using keyed fields to force anyone
 	// adding flags to the config to also have to set these fields.
 	AllGxhashProtocolChanges = &ChainConfig{
-		ChainID:  big.NewInt(0),
-		Gxhash:   new(GxhashConfig),
-		Clique:   nil,
-		Istanbul: nil,
+		ChainID:                 big.NewInt(0),
+		IstanbulCompatibleBlock: big.NewInt(0),
+		Gxhash:                  new(GxhashConfig),
+		Clique:                  nil,
+		Istanbul:                nil,
 	}
 
 	// AllCliqueProtocolChanges contains every protocol change (GxIPs) introduced

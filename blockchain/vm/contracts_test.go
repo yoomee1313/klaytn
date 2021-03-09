@@ -71,7 +71,7 @@ func prepare(reqGas uint64) (*Contract, *EVM, error) {
 }
 
 func testPrecompiled(addr string, test precompiledTest, t *testing.T) {
-	p := PrecompiledContractsConstantinople[common.HexToAddress(addr)]
+	p := PrecompiledContractsIstanbul[common.HexToAddress(addr)]
 	in := common.Hex2Bytes(test.Input)
 	reqGas, _ := p.GetRequiredGasAndComputationCost(in)
 
@@ -174,16 +174,16 @@ func TestPrecompiledBn256Pairing(t *testing.T)      { testJson("bn256Pairing", "
 func BenchmarkPrecompiledBn256Pairing(b *testing.B) { benchJson("bn256Pairing", "08", b) }
 
 // Tests the sample inputs of the vmLog
-func TestPrecompiledVmLog(t *testing.T)      { testJson("vmLog", "09", t) }
-func BenchmarkPrecompiledVmLog(b *testing.B) { benchJson("vmLog", "09", b) }
+func TestPrecompiledVmLog(t *testing.T)      { testJson("vmLog", "3fd", t) }
+func BenchmarkPrecompiledVmLog(b *testing.B) { benchJson("vmLog", "3fd", b) }
 
 // Tests the sample inputs of the feePayer
-func TestFeePayerContract(t *testing.T)         { testJson("feePayer", "0a", t) }
-func BenchmarkPrecompiledFeePayer(b *testing.B) { benchJson("feePayer", "0a", b) }
+func TestFeePayerContract(t *testing.T)         { testJson("feePayer", "3fe", t) }
+func BenchmarkPrecompiledFeePayer(b *testing.B) { benchJson("feePayer", "3fe", b) }
 
 // Tests the sample inputs of the validateSender
-func TestValidateSenderContract(t *testing.T)         { testJson("validateSender", "0b", t) }
-func BenchmarkPrecompiledValidateSender(b *testing.B) { benchJson("validateSender", "0b", b) }
+func TestValidateSenderContract(t *testing.T)         { testJson("validateSender", "3ff", t) }
+func BenchmarkPrecompiledValidateSender(b *testing.B) { benchJson("validateSender", "3ff", b) }
 
 // Tests OOG (out-of-gas) of modExp
 func TestPrecompiledModExpOOG(t *testing.T) {

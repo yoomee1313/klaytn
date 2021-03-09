@@ -71,7 +71,9 @@ type JumpTable [256]operation
 
 func newIstanbulInstructionSet() JumpTable {
 	instructionSet := newConstantinopleInstructionSet()
-	// TODO-IstanbulCompatible: add istanbul hardfork items
+	enable1344(&instructionSet)
+	enable1884(&instructionSet)
+	enable2200(&instructionSet)
 	return instructionSet
 }
 
