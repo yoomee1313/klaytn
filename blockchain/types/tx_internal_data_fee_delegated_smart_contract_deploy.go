@@ -301,7 +301,7 @@ func (t *TxInternalDataFeeDelegatedSmartContractDeploy) String() string {
 
 }
 
-func (t *TxInternalDataFeeDelegatedSmartContractDeploy) IntrinsicGas(currentBlockNumber uint64) (uint64, error) {
+func (t *TxInternalDataFeeDelegatedSmartContractDeploy) IntrinsicGas(currentBlockNumber uint64, istanbul bool) (uint64, error) {
 	gas := params.TxGasContractCreation + params.TxGasFeeDelegated
 
 	if t.HumanReadable {

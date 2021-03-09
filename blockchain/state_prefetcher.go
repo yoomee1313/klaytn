@@ -99,7 +99,8 @@ func precacheTransaction(config *params.ChainConfig, bc ChainContext, author *co
 	copiedTx := *tx
 
 	// Convert the transaction into an executable message and pre-cache its sender
-	msg, err := copiedTx.AsMessageWithAccountKeyPicker(types.MakeSigner(config, header.Number), statedb, header.Number.Uint64())
+	istanbul := config.IsIstanbul(header.Number)
+	msg, err := copiedTx.AsMessageWithAccountKeyPicker(types.MakeSigner(config, header.Number), statedb, header.Number.Uint64(), istanbul)
 	if err != nil {
 		return err
 	}

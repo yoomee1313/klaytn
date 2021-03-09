@@ -33,7 +33,7 @@ import (
 )
 
 // TxInternalDataFeeDelegatedSmartContractExecutionWithRatio represents a fee-delegated transaction executing a smart contract
-// with a specified fee ratio between the sender and the fee payer.
+// with a specified fee ratio between the senfzder and the fee payer.
 // The ratio is a fee payer's ratio in percentage.
 // For example, if it is 20, 20% of tx fee will be paid by the fee payer.
 // 80% of tx fee will be paid by the sender.
@@ -290,7 +290,7 @@ func (t *TxInternalDataFeeDelegatedSmartContractExecutionWithRatio) String() str
 		enc)
 }
 
-func (t *TxInternalDataFeeDelegatedSmartContractExecutionWithRatio) IntrinsicGas(currentBlockNumber uint64) (uint64, error) {
+func (t *TxInternalDataFeeDelegatedSmartContractExecutionWithRatio) IntrinsicGas(currentBlockNumber uint64, istanbul bool) (uint64, error) {
 	gas := params.TxGasContractExecution + params.TxGasFeeDelegatedWithRatio
 
 	gasPayloadWithGas, err := IntrinsicGasPayload(gas, t.Payload)

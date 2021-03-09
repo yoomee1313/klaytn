@@ -101,7 +101,7 @@ type Message interface {
 
 	// IntrinsicGas returns `intrinsic gas` based on the tx type.
 	// This value is used to differentiate tx fee based on the tx type.
-	IntrinsicGas(currentBlockNumber uint64) (uint64, error)
+	IntrinsicGas(currentBlockNumber uint64, istanbul bool) (uint64, error)
 
 	// Type returns the transaction type of the message.
 	Type() types.TxType

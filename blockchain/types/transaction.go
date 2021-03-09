@@ -229,8 +229,8 @@ func (tx *Transaction) ValidatedIntrinsicGas() uint64         { return tx.valida
 func (tx *Transaction) MakeRPCOutput() map[string]interface{} { return tx.data.MakeRPCOutput() }
 func (tx *Transaction) GetTxInternalData() TxInternalData     { return tx.data }
 
-func (tx *Transaction) IntrinsicGas(currentBlockNumber uint64) (uint64, error) {
-	return tx.data.IntrinsicGas(currentBlockNumber)
+func (tx *Transaction) IntrinsicGas(currentBlockNumber uint64, istanbul bool) (uint64, error) {
+	return tx.data.IntrinsicGas(currentBlockNumber, istanbul)
 }
 
 func (tx *Transaction) Validate(db StateDB, blockNumber uint64) error {
@@ -403,8 +403,8 @@ func (tx *Transaction) Execute(vm VM, stateDB StateDB, currentBlockNumber uint64
 //
 // XXX Rename message to something less arbitrary?
 // TODO-Klaytn: Message is removed and this function will return *Transaction.
-func (tx *Transaction) AsMessageWithAccountKeyPicker(s Signer, picker AccountKeyPicker, currentBlockNumber uint64) (*Transaction, error) {
-	intrinsicGas, err := tx.IntrinsicGas(currentBlockNumber)
+func (tx *Transaction) AsMessageWithAccountKeyPicker(s Signer, picker AccountKeyPicker, currentBlockNumber uint64, istanbul bool) (*Transaction, error) {
+	intrinsicGas, err := tx.IntrinsicGas(currentBlockNumber, istanbul)
 	if err != nil {
 		return nil, err
 	}

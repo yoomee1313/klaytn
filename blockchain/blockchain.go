@@ -2392,7 +2392,8 @@ func (bc *BlockChain) ApplyTransaction(chainConfig *params.ChainConfig, author *
 		return nil, 0, nil, err
 	}
 
-	msg, err := tx.AsMessageWithAccountKeyPicker(types.MakeSigner(chainConfig, header.Number), statedb, blockNumber)
+	istanbul := chainConfig.IsIstanbul(header.Number)
+	msg, err := tx.AsMessageWithAccountKeyPicker(types.MakeSigner(chainConfig, header.Number), statedb, blockNumber, istanbul)
 	if err != nil {
 		return nil, 0, nil, err
 	}

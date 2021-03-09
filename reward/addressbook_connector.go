@@ -62,7 +62,7 @@ func newAddressBookConnector(bc blockChain, gh governanceHelper) *addressBookCon
 }
 
 // make a message to the addressBook contract for executing getAllAddress function of the addressBook contract
-func (ac *addressBookConnector) makeMsgToAddressBook() (*types.Transaction, error) {
+func (ac *addressBookConnector) convertAbiToData() ([]byte, error) {
 	abiInstance, err := abi.JSON(strings.NewReader(ac.abi))
 	if err != nil {
 		return nil, err
@@ -73,16 +73,7 @@ func (ac *addressBookConnector) makeMsgToAddressBook() (*types.Transaction, erro
 		return nil, err
 	}
 
-	intrinsicGas, err := types.IntrinsicGas(data, false, true)
-	if err != nil {
-		return nil, err
-	}
-
-	// Create new call message
-	// TODO-Klaytn-Issue1166 Decide who will be sender(i.e. from)
-	msg := types.NewMessage(common.Address{}, &ac.contractAddress, 0, big.NewInt(0), 10000000, big.NewInt(0), data, false, intrinsicGas)
-
-	return msg, nil
+	return data, nil
 }
 
 // It parses the result bytes of calling addressBook to addresses.
@@ -163,16 +154,28 @@ func (ac *addressBookConnector) getStakingInfoFromAddressBook(blockNum uint64) (
 		return nil, errors.New(fmt.Sprintf("not staking block number. blockNum: %d", blockNum))
 	}
 
-	// Prepare a message
-	msg, err := ac.makeMsgToAddressBook()
+	// Convert abi to data
+	data, err := ac.convertAbiToData()
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("failed to make message for AddressBook. root err: %s", err))
 	}
 
+	// Get intervalBlock
 	intervalBlock := ac.bc.GetBlockByNumber(blockNum)
 	if intervalBlock == nil {
 		return nil, errors.New("stateDB is not ready for staking info")
 	}
+
+	// Prepare a message
+	istanbul := ac.bc.Config().IsIstanbul(intervalBlock.Number())
+	intrinsicGas, err := types.IntrinsicGas(data, false, istanbul)
+	if err != nil {
+		return nil, err
+	}
+	// TODO-Klaytn-Issue1166 Decide who will be sender(i.e. from)
+	msg := types.NewMessage(common.Address{}, &ac.contractAddress, 0, big.NewInt(0), 10000000, big.NewInt(0), data, false, intrinsicGas)
+
+	// Get statedb
 	statedb, err := ac.bc.StateAt(intervalBlock.Root())
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("failed to make a state for interval block. blockNum: %d, root err: %s", blockNum, err))

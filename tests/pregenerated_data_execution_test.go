@@ -183,12 +183,12 @@ func dataExecutionTest(b *testing.B, tc *preGeneratedTC) {
 
 	fmt.Println("Call AsMessageWithAccountKeyPicker for warmUpTxs")
 	for _, tx := range warmUpTxs {
-		tx.AsMessageWithAccountKeyPicker(signer, stateDB, bcData.bc.CurrentBlock().NumberU64())
+		tx.AsMessageWithAccountKeyPicker(signer, stateDB, bcData.bc.CurrentBlock().NumberU64(), true)
 	}
 
 	fmt.Println("Call AsMessageWithAccountKeyPicker for executionTxs")
 	for _, tx := range executionTxs {
-		tx.AsMessageWithAccountKeyPicker(signer, stateDB, bcData.bc.CurrentBlock().NumberU64())
+		tx.AsMessageWithAccountKeyPicker(signer, stateDB, bcData.bc.CurrentBlock().NumberU64(), true)
 	}
 
 	txPool := makeTxPool(bcData, txPoolSize)

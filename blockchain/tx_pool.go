@@ -176,6 +176,8 @@ type TxPool struct {
 	signer       types.Signer
 	mu           sync.RWMutex
 
+	istanbul bool // Fork indicator whether we are in the istanbul stage.
+
 	currentBlockNumber uint64                    // Current block number
 	currentState       *state.StateDB            // Current state in the blockchain head
 	pendingNonce       map[common.Address]uint64 // Pending nonce tracking virtual nonces
@@ -419,6 +421,10 @@ func (pool *TxPool) reset(oldHead, newHead *types.Header) {
 	//defer pool.mu.Unlock()
 
 	pool.addTxsLocked(reinject, false)
+
+	// Update all fork indicator by next pending block number.
+	next := new(big.Int).Add(newHead.Number, big.NewInt(1))
+	pool.istanbul = pool.chainconfig.IsIstanbul(next)
 
 	// validate the pool of pending transactions, this will remove
 	// any transactions that have been included in the block or
@@ -693,7 +699,7 @@ func (pool *TxPool) validateTx(tx *types.Transaction) error {
 		}
 	}
 
-	intrGas, err := tx.IntrinsicGas(pool.currentBlockNumber)
+	intrGas, err := tx.IntrinsicGas(pool.currentBlockNumber, pool.istanbul)
 	intrGas += gasFrom + gasFeePayer
 	if err != nil {
 		return err

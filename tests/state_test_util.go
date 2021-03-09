@@ -134,7 +134,8 @@ func (t *StateTest) Run(subtest StateSubtest, vmconfig vm.Config) (*state.StateD
 	statedb := MakePreState(memDBManager, t.json.Pre)
 
 	post := t.json.Post[subtest.Fork][subtest.Index]
-	msg, err := t.json.Tx.toMessage(post)
+	istanbul := config.IsIstanbul(block.Number())
+	msg, err := t.json.Tx.toMessage(post, istanbul)
 	if err != nil {
 		return nil, err
 	}
@@ -199,7 +200,7 @@ func (t *StateTest) genesis(config *params.ChainConfig) *blockchain.Genesis {
 	}
 }
 
-func (tx *stTransaction) toMessage(ps stPostState) (blockchain.Message, error) {
+func (tx *stTransaction) toMessage(ps stPostState, istanbul bool) (blockchain.Message, error) {
 	// Derive sender from private key if present.
 	var from common.Address
 	if len(tx.PrivateKey) > 0 {
@@ -245,7 +246,7 @@ func (tx *stTransaction) toMessage(ps stPostState) (blockchain.Message, error) {
 		return nil, fmt.Errorf("invalid tx data %q", dataHex)
 	}
 
-	intrinsicGas, err := types.IntrinsicGas(data, to == nil, true)
+	intrinsicGas, err := types.IntrinsicGas(data, to == nil, istanbul)
 	if err != nil {
 		return nil, err
 	}

@@ -266,7 +266,7 @@ func (t *TxInternalDataSmartContractDeploy) String() string {
 
 }
 
-func (t *TxInternalDataSmartContractDeploy) IntrinsicGas(currentBlockNumber uint64) (uint64, error) {
+func (t *TxInternalDataSmartContractDeploy) IntrinsicGas(currentBlockNumber uint64, istanbul bool) (uint64, error) {
 	gas := params.TxGasContractCreation
 
 	if t.HumanReadable {

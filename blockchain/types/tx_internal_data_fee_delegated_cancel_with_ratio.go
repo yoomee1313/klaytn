@@ -244,7 +244,7 @@ func (t *TxInternalDataFeeDelegatedCancelWithRatio) SetSignature(s TxSignatures)
 	t.TxSignatures = s
 }
 
-func (t *TxInternalDataFeeDelegatedCancelWithRatio) IntrinsicGas(currentBlockNumber uint64) (uint64, error) {
+func (t *TxInternalDataFeeDelegatedCancelWithRatio) IntrinsicGas(currentBlockNumber uint64, istanbul bool) (uint64, error) {
 	return params.TxGasCancel + params.TxGasFeeDelegatedWithRatio, nil
 }
 
