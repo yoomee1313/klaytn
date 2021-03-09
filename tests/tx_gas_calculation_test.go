@@ -744,7 +744,7 @@ func genMapForDeploy(from TestAccount, to TestAccount, gasPrice *big.Int, txType
 	intrinsicGas := getIntrinsicGas(txType)
 	intrinsicGas += uint64(0x175fd)
 
-	gasPayloadWithGas, err := types.IntrinsicGasPayload(intrinsicGas, common.FromHex(code))
+	gasPayloadWithGas, err := types.IntrinsicGasPayload(intrinsicGas, common.FromHex(code), false)
 	if err != nil {
 		return nil, 0
 	}
@@ -779,7 +779,7 @@ func genMapForExecution(from TestAccount, to TestAccount, gasPrice *big.Int, txT
 	intrinsicGas := getIntrinsicGas(txType)
 	intrinsicGas += uint64(0x9ec4)
 
-	gasPayloadWithGas, err := types.IntrinsicGasPayload(intrinsicGas, data)
+	gasPayloadWithGas, err := types.IntrinsicGasPayload(intrinsicGas, data, false)
 	if err != nil {
 		return nil, 0
 	}

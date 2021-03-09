@@ -149,7 +149,8 @@ const (
 	TxGasValueTransfer     uint64 = 21000
 	TxGasContractExecution uint64 = 21000
 
-	TxDataGas uint64 = 100
+	TxDataGas         uint64 = 100
+	TxDataGasIstanbul uint64 = 20
 )
 
 var (

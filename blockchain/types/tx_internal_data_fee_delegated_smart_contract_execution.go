@@ -273,7 +273,7 @@ func (t *TxInternalDataFeeDelegatedSmartContractExecution) String() string {
 func (t *TxInternalDataFeeDelegatedSmartContractExecution) IntrinsicGas(currentBlockNumber uint64, istanbul bool) (uint64, error) {
 	gas := params.TxGasContractExecution + params.TxGasFeeDelegated
 
-	gasPayloadWithGas, err := IntrinsicGasPayload(gas, t.Payload)
+	gasPayloadWithGas, err := IntrinsicGasPayload(gas, t.Payload, istanbul)
 	if err != nil {
 		return 0, err
 	}

@@ -471,16 +471,22 @@ func NewTxInternalDataWithMap(t TxType, values map[TxValueKeyType]interface{}) (
 	return nil, errUndefinedTxType
 }
 
-func IntrinsicGasPayload(gas uint64, data []byte) (uint64, error) {
+func IntrinsicGasPayload(gas uint64, data []byte, istanbul bool) (uint64, error) {
+	var txDataGas uint64
+	if istanbul {
+		txDataGas = params.TxDataGasIstanbul
+	} else {
+		txDataGas = params.TxDataGas
+	}
 	// Bump the required gas by the amount of transactional data
 	length := uint64(len(data))
 	if length > 0 {
 		// Make sure we don't exceed uint64 for all data combinations
-		if (math.MaxUint64-gas)/params.TxDataGas < length {
+		if (math.MaxUint64-gas)/txDataGas < length {
 			return 0, kerrors.ErrOutOfGas
 		}
 	}
-	return gas + length*params.TxDataGas, nil
+	return gas + length*txDataGas, nil
 }
 
 func IntrinsicGasPayloadLegacy(gas uint64, data []byte) (uint64, error) {
@@ -521,7 +527,7 @@ func IntrinsicGas(data []byte, contractCreation, istanbul bool) (uint64, error) 
 	var gasPayloadWithGas uint64
 	var err error
 	if istanbul {
-		gasPayloadWithGas, err = IntrinsicGasPayload(gas, data)
+		gasPayloadWithGas, err = IntrinsicGasPayload(gas, data, istanbul)
 	} else {
 		gasPayloadWithGas, err = IntrinsicGasPayloadLegacy(gas, data)
 	}

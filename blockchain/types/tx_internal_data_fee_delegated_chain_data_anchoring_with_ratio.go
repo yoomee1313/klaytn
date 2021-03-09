@@ -319,7 +319,7 @@ func (t *TxInternalDataFeeDelegatedChainDataAnchoringWithRatio) RecoverFeePayerP
 func (t *TxInternalDataFeeDelegatedChainDataAnchoringWithRatio) IntrinsicGas(currentBlockNumber uint64, istanbul bool) (uint64, error) {
 	gas := params.TxChainDataAnchoringGas + params.TxGasFeeDelegatedWithRatio
 
-	gasPayloadWithGas, err := IntrinsicGasPayload(gas, t.Payload)
+	gasPayloadWithGas, err := IntrinsicGasPayload(gas, t.Payload, istanbul)
 	if err != nil {
 		return 0, err
 	}

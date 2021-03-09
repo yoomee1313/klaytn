@@ -294,7 +294,7 @@ func (t *TxInternalDataFeeDelegatedChainDataAnchoring) RecoverFeePayerPubkey(txh
 func (t *TxInternalDataFeeDelegatedChainDataAnchoring) IntrinsicGas(currentBlockNumber uint64, istanbul bool) (uint64, error) {
 	gas := params.TxChainDataAnchoringGas + params.TxGasFeeDelegated
 
-	gasPayloadWithGas, err := IntrinsicGasPayload(gas, t.Payload)
+	gasPayloadWithGas, err := IntrinsicGasPayload(gas, t.Payload, istanbul)
 	if err != nil {
 		return 0, err
 	}

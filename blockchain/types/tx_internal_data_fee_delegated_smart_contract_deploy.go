@@ -308,7 +308,7 @@ func (t *TxInternalDataFeeDelegatedSmartContractDeploy) IntrinsicGas(currentBloc
 		gas += params.TxGasHumanReadable
 	}
 
-	gasPayloadWithGas, err := IntrinsicGasPayload(gas, t.Payload)
+	gasPayloadWithGas, err := IntrinsicGasPayload(gas, t.Payload, istanbul)
 	if err != nil {
 		return 0, err
 	}
