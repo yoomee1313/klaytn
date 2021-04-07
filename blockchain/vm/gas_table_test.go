@@ -87,7 +87,7 @@ func TestEIP2200(t *testing.T) {
 		address := common.BytesToAddress([]byte("contract"))
 
 		statedb, _ := state.New(common.Hash{}, state.NewDatabase(database.NewMemoryDBManager()))
-		statedb.CreateAccount(address)
+		statedb.CreateSmartContractAccount(address, params.CodeFormatEVM2)
 		statedb.SetCode(address, hexutil.MustDecode(tt.input))
 		statedb.SetState(address, common.Hash{}, common.BytesToHash([]byte{tt.original}))
 		statedb.Finalise(true, false) // Push the state into the "original" slot
