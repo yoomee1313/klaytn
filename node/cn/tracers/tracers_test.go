@@ -177,7 +177,7 @@ func TestPrestateTracerCreate2(t *testing.T) {
 		Code:    []byte{},
 		Balance: big.NewInt(500000000000000),
 	}
-	statedb := tests.MakePreState(database.NewMemoryDBManager(), alloc)
+	statedb := tests.MakePreState(database.NewMemoryDBManager(), alloc, false)
 	// Create the tracer, the EVM environment and run it
 	tracer, err := New("prestateTracer")
 	if err != nil {
@@ -343,7 +343,7 @@ func TestCallTracer(t *testing.T) {
 				GasLimit:    uint64(test.Context.GasLimit),
 				GasPrice:    tx.GasPrice(),
 			}
-			statedb := tests.MakePreState(database.NewMemoryDBManager(), test.Genesis.Alloc)
+			statedb := tests.MakePreState(database.NewMemoryDBManager(), test.Genesis.Alloc, false)
 
 			// Create the tracer, the EVM environment and run it
 			tracer, err := New("callTracer")
@@ -445,7 +445,7 @@ func TestInternalCallTracer(t *testing.T) {
 				GasLimit:    uint64(test.Context.GasLimit),
 				GasPrice:    tx.GasPrice(),
 			}
-			statedb := tests.MakePreState(database.NewMemoryDBManager(), test.Genesis.Alloc)
+			statedb := tests.MakePreState(database.NewMemoryDBManager(), test.Genesis.Alloc, false)
 
 			// Create the tracer, the EVM environment and run it
 			tracer := vm.NewInternalTxTracer()

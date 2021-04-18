@@ -155,12 +155,12 @@ func (t *StateTest) Run(subtest StateSubtest, vmconfig vm.Config) (*state.StateD
 	}
 	vmconfig.ExtraEips = eips
 	block := t.genesis(config).ToBlock(common.Hash{}, nil)
+	isIstanbul := config.IsIstanbul(block.Number())
 	memDBManager := database.NewMemoryDBManager()
-	statedb := MakePreState(memDBManager, t.json.Pre)
+	statedb := MakePreState(memDBManager, t.json.Pre, isIstanbul)
 
 	post := t.json.Post[subtest.Fork][subtest.Index]
-	istanbul := config.IsIstanbul(block.Number())
-	msg, err := t.json.Tx.toMessage(post, istanbul)
+	msg, err := t.json.Tx.toMessage(post, isIstanbul)
 	if err != nil {
 		return nil, err
 	}
@@ -196,11 +196,18 @@ func (t *StateTest) gasLimit(subtest StateSubtest) uint64 {
 	return t.json.Tx.GasLimit[t.json.Post[subtest.Fork][subtest.Index].Indexes.Gas]
 }
 
-func MakePreState(db database.DBManager, accounts blockchain.GenesisAlloc) *state.StateDB {
+func MakePreState(db database.DBManager, accounts blockchain.GenesisAlloc, isIstanbul bool) *state.StateDB {
 	sdb := state.NewDatabase(db)
 	statedb, _ := state.New(common.Hash{}, sdb)
 	for addr, a := range accounts {
 		if len(a.Code) != 0 {
+			var cf params.CodeFormat
+			if isIstanbul {
+				cf = params.CodeFormatEVM2
+			} else {
+				cf = params.CodeFormatEVM
+			}
+			statedb.CreateSmartContractAccount(addr, cf)
 			statedb.SetCode(addr, a.Code)
 		}
 		for k, v := range a.Storage {

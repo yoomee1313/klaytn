@@ -39,6 +39,10 @@ var Forks = map[string]*params.ChainConfig{
 	"Constantinople": {
 		ChainID: big.NewInt(1),
 	},
+	"Istanbul": {
+		ChainID:                 big.NewInt(1),
+		IstanbulCompatibleBlock: big.NewInt(0),
+	},
 }
 
 // UnsupportedForkError is returned when a test requests a fork that isn't implemented.
