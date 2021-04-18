@@ -90,7 +90,7 @@ func TestCodeFormat(t *testing.T) {
 	}
 
 	for _, f := range testFunctions {
-		codeFormat := params.CodeFormatEVM
+		codeFormat := params.CodeFormatEVMConstantinople
 		state := error(nil)
 		var tx *types.Transaction
 

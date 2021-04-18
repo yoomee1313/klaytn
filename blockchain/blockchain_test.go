@@ -1466,7 +1466,7 @@ func genInternalTxTransaction(t *testing.T, block *BlockGen, address common.Addr
 		types.TxValueKeyGasPrice:      gasPrice,
 		types.TxValueKeyHumanReadable: false,
 		types.TxValueKeyTo:            (*common.Address)(nil),
-		types.TxValueKeyCodeFormat:    params.CodeFormatEVM,
+		types.TxValueKeyCodeFormat:    params.CodeFormatEVMConstantinople,
 		types.TxValueKeyFrom:          address,
 		types.TxValueKeyData:          common.Hex2Bytes(testCode),
 	}

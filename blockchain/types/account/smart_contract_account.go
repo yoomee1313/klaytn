@@ -63,7 +63,7 @@ func newSmartContractAccount() *SmartContractAccount {
 		newAccountCommon(),
 		common.Hash{},
 		emptyCodeHash,
-		params.CodeFormatEVM,
+		params.CodeFormatEVMConstantinople,
 	}
 }
 
@@ -72,7 +72,7 @@ func newSmartContractAccountWithMap(values map[AccountValueKeyType]interface{}) 
 		newAccountCommonWithMap(values),
 		common.Hash{},
 		emptyCodeHash,
-		params.CodeFormatEVM,
+		params.CodeFormatEVMConstantinople,
 	}
 
 	if v, ok := values[AccountValueKeyStorageRoot].(common.Hash); ok {
@@ -121,7 +121,7 @@ func (sca *SmartContractAccount) DecodeRLP(s *rlp.Stream) error {
 		newAccountCommonSerializable(),
 		common.Hash{},
 		[]byte{},
-		params.CodeFormatEVM,
+		params.CodeFormatEVMConstantinople,
 	}
 
 	if err := s.Decode(serialized); err != nil {

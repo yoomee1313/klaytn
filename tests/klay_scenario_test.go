@@ -362,7 +362,7 @@ func TestSmartContractDeployAddress(t *testing.T) {
 			types.TxValueKeyGasPrice:      gasPrice,
 			types.TxValueKeyHumanReadable: false,
 			types.TxValueKeyData:          common.FromHex(code),
-			types.TxValueKeyCodeFormat:    params.CodeFormatEVM,
+			types.TxValueKeyCodeFormat:    params.CodeFormatEVMConstantinople,
 		}
 		tx, err := types.NewTransactionWithMap(types.TxTypeSmartContractDeploy, values)
 		assert.Equal(t, nil, err)
@@ -452,7 +452,7 @@ func TestSmartContractScenario(t *testing.T) {
 			types.TxValueKeyGasPrice:      gasPrice,
 			types.TxValueKeyHumanReadable: false,
 			types.TxValueKeyData:          common.FromHex(code),
-			types.TxValueKeyCodeFormat:    params.CodeFormatEVM,
+			types.TxValueKeyCodeFormat:    params.CodeFormatEVMConstantinople,
 		}
 		tx, err := types.NewTransactionWithMap(types.TxTypeSmartContractDeploy, values)
 		assert.Equal(t, nil, err)
@@ -635,7 +635,7 @@ func TestSmartContractSign(t *testing.T) {
 			types.TxValueKeyGasPrice:      gasPrice,
 			types.TxValueKeyHumanReadable: false,
 			types.TxValueKeyData:          common.FromHex(code),
-			types.TxValueKeyCodeFormat:    params.CodeFormatEVM,
+			types.TxValueKeyCodeFormat:    params.CodeFormatEVMConstantinople,
 		}
 		tx, err := types.NewTransactionWithMap(types.TxTypeSmartContractDeploy, values)
 		assert.Equal(t, nil, err)
@@ -794,7 +794,7 @@ func TestFeeDelegatedSmartContractScenario(t *testing.T) {
 			types.TxValueKeyHumanReadable: false,
 			types.TxValueKeyData:          common.FromHex(code),
 			types.TxValueKeyFeePayer:      reservoir2.Addr,
-			types.TxValueKeyCodeFormat:    params.CodeFormatEVM,
+			types.TxValueKeyCodeFormat:    params.CodeFormatEVMConstantinople,
 		}
 		tx, err := types.NewTransactionWithMap(types.TxTypeFeeDelegatedSmartContractDeploy, values)
 		assert.Equal(t, nil, err)
@@ -987,7 +987,7 @@ func TestFeeDelegatedSmartContractScenarioWithRatio(t *testing.T) {
 			types.TxValueKeyData:               common.FromHex(code),
 			types.TxValueKeyFeePayer:           reservoir2.Addr,
 			types.TxValueKeyFeeRatioOfFeePayer: types.FeeRatio(30),
-			types.TxValueKeyCodeFormat:         params.CodeFormatEVM,
+			types.TxValueKeyCodeFormat:         params.CodeFormatEVMConstantinople,
 		}
 		tx, err := types.NewTransactionWithMap(types.TxTypeFeeDelegatedSmartContractDeployWithRatio, values)
 		assert.Equal(t, nil, err)
@@ -1840,7 +1840,7 @@ func TestValidateSender(t *testing.T) {
 			types.TxValueKeyHumanReadable: false,
 			// The binary below is a compiled binary of contracts/reward/contract/KlaytnReward.sol.
 			types.TxValueKeyData:       common.Hex2Bytes("608060405234801561001057600080fd5b506101de806100206000396000f3006080604052600436106100615763ffffffff7c01000000000000000000000000000000000000000000000000000000006000350416631a39d8ef81146100805780636353586b146100a757806370a08231146100ca578063fd6b7ef8146100f8575b3360009081526001602052604081208054349081019091558154019055005b34801561008c57600080fd5b5061009561010d565b60408051918252519081900360200190f35b6100c873ffffffffffffffffffffffffffffffffffffffff60043516610113565b005b3480156100d657600080fd5b5061009573ffffffffffffffffffffffffffffffffffffffff60043516610147565b34801561010457600080fd5b506100c8610159565b60005481565b73ffffffffffffffffffffffffffffffffffffffff1660009081526001602052604081208054349081019091558154019055565b60016020526000908152604090205481565b336000908152600160205260408120805490829055908111156101af57604051339082156108fc029083906000818181858888f193505050501561019c576101af565b3360009081526001602052604090208190555b505600a165627a7a72305820627ca46bb09478a015762806cc00c431230501118c7c26c30ac58c4e09e51c4f0029"),
-			types.TxValueKeyCodeFormat: params.CodeFormatEVM,
+			types.TxValueKeyCodeFormat: params.CodeFormatEVMConstantinople,
 		})
 		assert.Equal(t, nil, err)
 

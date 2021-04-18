@@ -120,7 +120,7 @@ func testTxFeeRatioRange(t *testing.T, feeRatio types.FeeRatio, expected error) 
 			types.TxValueKeyGasPrice:      gasPrice,
 			types.TxValueKeyHumanReadable: false,
 			types.TxValueKeyData:          code,
-			types.TxValueKeyCodeFormat:    params.CodeFormatEVM,
+			types.TxValueKeyCodeFormat:    params.CodeFormatEVMConstantinople,
 		}
 		tx, err := types.NewTransactionWithMap(types.TxTypeSmartContractDeploy, values)
 		assert.Equal(t, nil, err)
@@ -239,7 +239,7 @@ func testTxFeeRatioRange(t *testing.T, feeRatio types.FeeRatio, expected error) 
 			types.TxValueKeyData:               []byte{0x80},
 			types.TxValueKeyFeePayer:           reservoir2.Addr,
 			types.TxValueKeyFeeRatioOfFeePayer: feeRatio,
-			types.TxValueKeyCodeFormat:         params.CodeFormatEVM,
+			types.TxValueKeyCodeFormat:         params.CodeFormatEVMConstantinople,
 		}
 		tx, err := types.NewTransactionWithMap(types.TxTypeFeeDelegatedSmartContractDeployWithRatio, values)
 		assert.Equal(t, nil, err)

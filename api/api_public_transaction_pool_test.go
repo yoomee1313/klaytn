@@ -54,7 +54,7 @@ var (
 	testFeePayer      = common.HexToAddress("0x819104a190255e0cedbdd9d5f59a557633d79db1")
 	testFeeRatio      = types.FeeRatio(30)
 	testData          = hexutil.Bytes{0x11, 0x99}
-	testCodeFormat    = params.CodeFormatEVM
+	testCodeFormat    = params.CodeFormatEVMConstantinople
 	testHumanReadable = false
 	testAccountKey    = hexutil.Bytes{0x01, 0xc0}
 	testFrom          = common.HexToAddress("0xa7Eb6992c5FD55F43305B24Ee67150Bf4910d329")

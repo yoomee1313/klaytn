@@ -29,7 +29,6 @@ import (
 	"github.com/klaytn/klaytn/crypto"
 	"github.com/klaytn/klaytn/crypto/sha3"
 	"github.com/klaytn/klaytn/kerrors"
-	"github.com/klaytn/klaytn/params"
 	"github.com/klaytn/klaytn/rlp"
 )
 
@@ -386,7 +385,7 @@ func (t *TxInternalDataLegacy) Execute(sender ContractRef, vm VM, stateDB StateD
 	///////////////////////////////////////////////////////
 	if t.Recipient == nil {
 		// Sender's nonce will be increased in '`vm.Create()`
-		ret, _, usedGas, err = vm.Create(sender, t.Payload, gas, value, params.CodeFormatEVM)
+		ret, _, usedGas, err = vm.Create(sender, t.Payload, gas, value)
 	} else {
 		stateDB.IncNonce(sender.Address())
 		ret, usedGas, err = vm.Call(sender, *t.Recipient, t.Payload, gas, value)

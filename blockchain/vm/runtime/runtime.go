@@ -107,7 +107,7 @@ func Execute(code, input []byte, cfg *Config) ([]byte, *state.StateDB, error) {
 		vmenv   = NewEnv(cfg)
 		sender  = vm.AccountRef(cfg.Origin)
 	)
-	cfg.State.CreateSmartContractAccount(address, params.CodeFormatEVM)
+	cfg.State.CreateSmartContractAccount(address, true)
 	// set the receiver's (the executing contract) code for execution.
 	cfg.State.SetCode(address, code)
 	// Call the code with the given configuration.
@@ -144,7 +144,6 @@ func Create(input []byte, cfg *Config) ([]byte, common.Address, uint64, error) {
 		input,
 		cfg.GasLimit,
 		cfg.Value,
-		params.CodeFormatEVM,
 	)
 	return code, address, leftOverGas, err
 }

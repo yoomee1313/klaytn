@@ -667,16 +667,22 @@ func (self *StateDB) CreateEOA(addr common.Address, humanReadable bool, key acco
 	}
 }
 
-func (self *StateDB) CreateSmartContractAccount(addr common.Address, format params.CodeFormat) {
-	self.CreateSmartContractAccountWithKey(addr, false, accountkey.NewAccountKeyFail(), format)
+func (self *StateDB) CreateSmartContractAccount(addr common.Address, isIstanbul bool) {
+	self.CreateSmartContractAccountWithKey(addr, false, accountkey.NewAccountKeyFail(), isIstanbul)
 }
 
-func (self *StateDB) CreateSmartContractAccountWithKey(addr common.Address, humanReadable bool, key accountkey.AccountKey, format params.CodeFormat) {
+func (self *StateDB) CreateSmartContractAccountWithKey(addr common.Address, humanReadable bool, key accountkey.AccountKey, isIstanbul bool) {
+	var cf params.CodeFormat
+	if isIstanbul {
+		cf = params.CodeFormatEVMIstanbul
+	} else {
+		cf = params.CodeFormatEVMConstantinople
+	}
 	values := map[account.AccountValueKeyType]interface{}{
 		account.AccountValueKeyNonce:         uint64(1),
 		account.AccountValueKeyHumanReadable: humanReadable,
 		account.AccountValueKeyAccountKey:    key,
-		account.AccountValueKeyCodeFormat:    format,
+		account.AccountValueKeyCodeFormat:    cf,
 	}
 	new, prev := self.createObjectWithMap(addr, account.SmartContractAccountType, values)
 	if prev != nil {

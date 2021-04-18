@@ -411,7 +411,7 @@ func BenchmarkRPCOutput(t *testing.B) {
 			types.TxValueKeyGasPrice:      common.Big0,
 			types.TxValueKeyHumanReadable: false,
 			types.TxValueKeyData:          common.FromHex(code),
-			types.TxValueKeyCodeFormat:    params.CodeFormatEVM,
+			types.TxValueKeyCodeFormat:    params.CodeFormatEVMConstantinople,
 		}
 		tx, err := types.NewTransactionWithMap(types.TxTypeSmartContractDeploy, values)
 		assert.Equal(t, nil, err)
@@ -439,7 +439,7 @@ func BenchmarkRPCOutput(t *testing.B) {
 			types.TxValueKeyHumanReadable: false,
 			types.TxValueKeyData:          common.FromHex(code),
 			types.TxValueKeyFeePayer:      reservoir2.Addr,
-			types.TxValueKeyCodeFormat:    params.CodeFormatEVM,
+			types.TxValueKeyCodeFormat:    params.CodeFormatEVMConstantinople,
 		}
 		tx, err := types.NewTransactionWithMap(types.TxTypeFeeDelegatedSmartContractDeploy, values)
 		assert.Equal(t, nil, err)
@@ -469,7 +469,7 @@ func BenchmarkRPCOutput(t *testing.B) {
 			types.TxValueKeyData:               common.FromHex(code),
 			types.TxValueKeyFeePayer:           reservoir2.Addr,
 			types.TxValueKeyFeeRatioOfFeePayer: types.FeeRatio(33),
-			types.TxValueKeyCodeFormat:         params.CodeFormatEVM,
+			types.TxValueKeyCodeFormat:         params.CodeFormatEVMConstantinople,
 		}
 		tx, err := types.NewTransactionWithMap(types.TxTypeFeeDelegatedSmartContractDeployWithRatio, values)
 		assert.Equal(t, nil, err)

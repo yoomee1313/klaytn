@@ -94,7 +94,7 @@ func TestValidatingUnavailableContractExecution(t *testing.T) {
 			types.TxValueKeyTo:            (*common.Address)(nil),
 			types.TxValueKeyFrom:          reservoir.GetAddr(),
 			types.TxValueKeyData:          common.FromHex(code),
-			types.TxValueKeyCodeFormat:    params.CodeFormatEVM,
+			types.TxValueKeyCodeFormat:    params.CodeFormatEVMConstantinople,
 		}
 		tx, err := types.NewTransactionWithMap(types.TxTypeSmartContractDeploy, values)
 		assert.Equal(t, nil, err)
@@ -118,7 +118,7 @@ func TestValidatingUnavailableContractExecution(t *testing.T) {
 			types.TxValueKeyTo:            (*common.Address)(nil),
 			types.TxValueKeyFrom:          reservoir.GetAddr(),
 			types.TxValueKeyData:          []byte{}, // the invalid contract doesn't have contract code
-			types.TxValueKeyCodeFormat:    params.CodeFormatEVM,
+			types.TxValueKeyCodeFormat:    params.CodeFormatEVMConstantinople,
 		}
 		tx2, err := types.NewTransactionWithMap(types.TxTypeSmartContractDeploy, values)
 		assert.Equal(t, nil, err)

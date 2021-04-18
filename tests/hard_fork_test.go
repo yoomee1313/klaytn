@@ -263,7 +263,7 @@ func genBlocks(t *testing.T) {
 				types.TxValueKeyGasPrice:      gasPrice,
 				types.TxValueKeyHumanReadable: false,
 				types.TxValueKeyData:          common.FromHex(code),
-				types.TxValueKeyCodeFormat:    params.CodeFormatEVM,
+				types.TxValueKeyCodeFormat:    params.CodeFormatEVMConstantinople,
 			}
 			tx, err := types.NewTransactionWithMap(types.TxTypeSmartContractDeploy, values)
 			assert.Equal(t, nil, err)
@@ -290,7 +290,7 @@ func genBlocks(t *testing.T) {
 				types.TxValueKeyHumanReadable: false,
 				types.TxValueKeyData:          common.FromHex(code),
 				types.TxValueKeyFeePayer:      reservoir.GetAddr(),
-				types.TxValueKeyCodeFormat:    params.CodeFormatEVM,
+				types.TxValueKeyCodeFormat:    params.CodeFormatEVMConstantinople,
 			}
 			tx, err := types.NewTransactionWithMap(types.TxTypeFeeDelegatedSmartContractDeploy, values)
 			assert.Equal(t, nil, err)
@@ -319,7 +319,7 @@ func genBlocks(t *testing.T) {
 				types.TxValueKeyData:               common.FromHex(code),
 				types.TxValueKeyFeePayer:           reservoir.GetAddr(),
 				types.TxValueKeyFeeRatioOfFeePayer: types.FeeRatio(20),
-				types.TxValueKeyCodeFormat:         params.CodeFormatEVM,
+				types.TxValueKeyCodeFormat:         params.CodeFormatEVMConstantinople,
 			}
 			tx, err := types.NewTransactionWithMap(types.TxTypeFeeDelegatedSmartContractDeployWithRatio, values)
 			assert.Equal(t, nil, err)
@@ -348,7 +348,7 @@ func genBlocks(t *testing.T) {
 				types.TxValueKeyGasPrice:      gasPrice,
 				types.TxValueKeyHumanReadable: false,
 				types.TxValueKeyData:          common.FromHex(code),
-				types.TxValueKeyCodeFormat:    params.CodeFormatEVM,
+				types.TxValueKeyCodeFormat:    params.CodeFormatEVMConstantinople,
 			}
 			tx, err := types.NewTransactionWithMap(types.TxTypeSmartContractDeploy, values)
 			assert.Equal(t, nil, err)
@@ -373,7 +373,7 @@ func genBlocks(t *testing.T) {
 				types.TxValueKeyHumanReadable: false,
 				types.TxValueKeyData:          common.FromHex(code),
 				types.TxValueKeyFeePayer:      reservoir.GetAddr(),
-				types.TxValueKeyCodeFormat:    params.CodeFormatEVM,
+				types.TxValueKeyCodeFormat:    params.CodeFormatEVMConstantinople,
 			}
 			tx, err := types.NewTransactionWithMap(types.TxTypeFeeDelegatedSmartContractDeploy, values)
 			assert.Equal(t, nil, err)
@@ -402,7 +402,7 @@ func genBlocks(t *testing.T) {
 				types.TxValueKeyData:               common.FromHex(code),
 				types.TxValueKeyFeePayer:           reservoir.GetAddr(),
 				types.TxValueKeyFeeRatioOfFeePayer: types.FeeRatio(20),
-				types.TxValueKeyCodeFormat:         params.CodeFormatEVM,
+				types.TxValueKeyCodeFormat:         params.CodeFormatEVMConstantinople,
 			}
 			tx, err := types.NewTransactionWithMap(types.TxTypeFeeDelegatedSmartContractDeployWithRatio, values)
 			assert.Equal(t, nil, err)

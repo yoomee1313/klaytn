@@ -56,14 +56,14 @@ type (
 // - an address of precompiled contracts
 // - an address of program accounts
 func isProgramAccount(evm *EVM, caller common.Address, addr common.Address, db StateDB) bool {
-	_, exists := evm.GetPrecompiledContract(caller, addr)[addr]
+	_, exists := evm.GetPrecompiledContractMap(caller)[addr]
 	return exists || db.IsProgramAccount(addr)
 }
 
 // run runs the given contract and takes care of running precompiles with a fallback to the byte code interpreter.
 func run(evm *EVM, contract *Contract, input []byte) ([]byte, error) {
 	if contract.CodeAddr != nil {
-		precompiles := evm.GetPrecompiledContract(contract.CallerAddress, *contract.CodeAddr)
+		precompiles := evm.GetPrecompiledContractMap(contract.CallerAddress)
 		if p := precompiles[*contract.CodeAddr]; p != nil {
 			///////////////////////////////////////////////////////
 			// OpcodeComputationCostLimit: The below code is commented and will be usd for debugging purposes.
@@ -223,7 +223,7 @@ func (evm *EVM) Call(caller types.ContractRef, addr common.Address, input []byte
 
 	// Filter out invalid precompiled address calls, and create a precompiled contract object if it is not exist.
 	if common.IsPrecompiledContractAddress(addr) {
-		precompiles := evm.GetPrecompiledContract(caller.Address(), addr)
+		precompiles := evm.GetPrecompiledContractMap(caller.Address())
 		if precompiles[addr] == nil || value.Sign() != 0 {
 			// Return an error if an enabled precompiled address is called or a value is transferred to a precompiled address.
 			if evm.vmConfig.Debug && evm.depth == 0 {
@@ -234,7 +234,7 @@ func (evm *EVM) Call(caller types.ContractRef, addr common.Address, input []byte
 		}
 		// create an account object of the enabled precompiled address if not exist.
 		if !evm.StateDB.Exist(addr) {
-			evm.StateDB.CreateSmartContractAccount(addr, evm.CurrentCodeFormat())
+			evm.StateDB.CreateSmartContractAccount(addr, evm.chainRules.IsIstanbul)
 		}
 	}
 
@@ -430,7 +430,7 @@ func (c *codeAndHash) Hash() common.Hash {
 }
 
 // Create creates a new contract using code as deployment code.
-func (evm *EVM) create(caller types.ContractRef, codeAndHash *codeAndHash, gas uint64, value *big.Int, address common.Address, humanReadable bool, codeFormat params.CodeFormat) (ret []byte, contractAddr common.Address, leftOverGas uint64, err error) {
+func (evm *EVM) create(caller types.ContractRef, codeAndHash *codeAndHash, gas uint64, value *big.Int, address common.Address, humanReadable bool) (ret []byte, contractAddr common.Address, leftOverGas uint64, err error) {
 
 	// Depth check execution. Fail if we're trying to execute above the
 	// limit.
@@ -456,7 +456,7 @@ func (evm *EVM) create(caller types.ContractRef, codeAndHash *codeAndHash, gas u
 	// TODO-Klaytn-Accounts: for now, smart contract accounts cannot withdraw KLAYs via ValueTransfer
 	//   because the account key is set to AccountKeyFail by default.
 	//   Need to make a decision of the key type.
-	evm.StateDB.CreateSmartContractAccountWithKey(address, humanReadable, accountkey.NewAccountKeyFail(), evm.CurrentCodeFormat())
+	evm.StateDB.CreateSmartContractAccountWithKey(address, humanReadable, accountkey.NewAccountKeyFail(), evm.chainRules.IsIstanbul)
 	evm.StateDB.SetNonce(address, 1)
 	if value.Sign() != 0 {
 		evm.Transfer(evm.StateDB, caller.Address(), address, value)
@@ -519,48 +519,36 @@ func (evm *EVM) create(caller types.ContractRef, codeAndHash *codeAndHash, gas u
 }
 
 // Create creates a new contract using code as deployment code.
-func (evm *EVM) Create(caller types.ContractRef, code []byte, gas uint64, value *big.Int, codeFormat params.CodeFormat) (ret []byte, contractAddr common.Address, leftOverGas uint64, err error) {
+func (evm *EVM) Create(caller types.ContractRef, code []byte, gas uint64, value *big.Int) (ret []byte, contractAddr common.Address, leftOverGas uint64, err error) {
 	codeAndHash := &codeAndHash{code: code}
 	contractAddr = crypto.CreateAddress(caller.Address(), evm.StateDB.GetNonce(caller.Address()))
-	return evm.create(caller, codeAndHash, gas, value, contractAddr, false, codeFormat)
+	return evm.create(caller, codeAndHash, gas, value, contractAddr, false)
 }
 
 // Create2 creates a new contract using code as deployment code.
 //
 // The different between Create2 with Create is Create2 uses sha3(0xff ++ msg.sender ++ salt ++ sha3(init_code))[12:]
 // instead of the usual sender-and-nonce-hash as the address where the contract is initialized at.
-func (evm *EVM) Create2(caller types.ContractRef, code []byte, gas uint64, endowment *big.Int, salt *big.Int, codeFormat params.CodeFormat) (ret []byte, contractAddr common.Address, leftOverGas uint64, err error) {
+func (evm *EVM) Create2(caller types.ContractRef, code []byte, gas uint64, endowment *big.Int, salt *big.Int) (ret []byte, contractAddr common.Address, leftOverGas uint64, err error) {
 	codeAndHash := &codeAndHash{code: code}
 	contractAddr = crypto.CreateAddress2(caller.Address(), common.BigToHash(salt), codeAndHash.Hash().Bytes())
-	return evm.create(caller, codeAndHash, gas, endowment, contractAddr, false, codeFormat)
+	return evm.create(caller, codeAndHash, gas, endowment, contractAddr, false)
 }
 
 // CreateWithAddress creates a new contract using code as deployment code with given address and humanReadable.
-func (evm *EVM) CreateWithAddress(caller types.ContractRef, code []byte, gas uint64, value *big.Int, contractAddr common.Address, humanReadable bool, codeFormat params.CodeFormat) ([]byte, common.Address, uint64, error) {
+func (evm *EVM) CreateWithAddress(caller types.ContractRef, code []byte, gas uint64, value *big.Int, contractAddr common.Address, humanReadable bool) ([]byte, common.Address, uint64, error) {
 	codeAndHash := &codeAndHash{code: code}
 	codeAndHash.Hash()
-	return evm.create(caller, codeAndHash, gas, value, contractAddr, humanReadable, codeFormat)
+	return evm.create(caller, codeAndHash, gas, value, contractAddr, humanReadable)
 }
 
-func (evm *EVM) CurrentCodeFormat() params.CodeFormat {
+func (evm *EVM) GetPrecompiledContractMap(caller common.Address) map[common.Address]PrecompiledContract {
 	switch {
 	case evm.chainRules.IsIstanbul:
-		return params.CodeFormatEVM2
-	default:
-		return params.CodeFormatEVM
-	}
-}
-
-func (evm *EVM) GetPrecompiledContract(caller, address common.Address) map[common.Address]PrecompiledContract {
-	switch {
-	case evm.chainRules.IsIstanbul:
-		// Below code is added to make vmLog(0x09), feePayer(0x0a), validateSender(0x0b) precompiled contract
-		// works after the istanbul incompatible change
-		// (1) check whether the contract(caller) is deployed before istanbul incompatible change
-		// (2) then, check whether the precompiled contract(address) is 0x09, 0x0a, 0x0b
-		// (3) if it is, use old precompiled contract set
-		if evm.StateDB.GetCodeFormat(caller) == params.CodeFormatEVM &&
-			(address == common.HexToAddress("0x09") || address == common.HexToAddress("0x0a") || address == common.HexToAddress("0x0b")) {
+		// if contract(caller) is deployed before istanbul, use the old precompiled contract set (use constantinople)
+		//      (gas price policy also follows constantinople rules)
+		// Without these lines, contracts that are deployed before istanbul and uses vmLog(0x09), feePayer(0x0a), validateSender(0x0b) won't not work properly.
+		if evm.StateDB.GetCodeFormat(caller) == params.CodeFormatEVMConstantinople {
 			return PrecompiledContractsConstantinople
 		}
 		return PrecompiledContractsIstanbul

@@ -134,7 +134,7 @@ func BenchmarkEvmOp(t *testing.B) {
 				types.TxValueKeyGasPrice:      gasPrice,
 				types.TxValueKeyHumanReadable: false,
 				types.TxValueKeyData:          common.FromHex(contract.Code),
-				types.TxValueKeyCodeFormat:    params.CodeFormatEVM,
+				types.TxValueKeyCodeFormat:    params.CodeFormatEVMConstantinople,
 			}
 			tx, err := types.NewTransactionWithMap(types.TxTypeSmartContractDeploy, values)
 			require.Equal(t, nil, err)

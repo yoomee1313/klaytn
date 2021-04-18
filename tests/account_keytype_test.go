@@ -234,7 +234,7 @@ func generateDefaultTx(sender *TestAccountType, recipient *TestAccountType, txTy
 		values[types.TxValueKeyGasPrice] = amountZero
 		values[types.TxValueKeyData] = dataCode
 		values[types.TxValueKeyHumanReadable] = false
-		values[types.TxValueKeyCodeFormat] = params.CodeFormatEVM
+		values[types.TxValueKeyCodeFormat] = params.CodeFormatEVMConstantinople
 	case types.TxTypeFeeDelegatedSmartContractDeploy:
 		values[types.TxValueKeyNonce] = sender.Nonce
 		values[types.TxValueKeyFrom] = sender.Addr
@@ -245,7 +245,7 @@ func generateDefaultTx(sender *TestAccountType, recipient *TestAccountType, txTy
 		values[types.TxValueKeyData] = dataCode
 		values[types.TxValueKeyHumanReadable] = false
 		values[types.TxValueKeyFeePayer] = recipient.Addr
-		values[types.TxValueKeyCodeFormat] = params.CodeFormatEVM
+		values[types.TxValueKeyCodeFormat] = params.CodeFormatEVMConstantinople
 	case types.TxTypeFeeDelegatedSmartContractDeployWithRatio:
 		values[types.TxValueKeyNonce] = sender.Nonce
 		values[types.TxValueKeyFrom] = sender.Addr
@@ -257,7 +257,7 @@ func generateDefaultTx(sender *TestAccountType, recipient *TestAccountType, txTy
 		values[types.TxValueKeyHumanReadable] = false
 		values[types.TxValueKeyFeePayer] = recipient.Addr
 		values[types.TxValueKeyFeeRatioOfFeePayer] = ratio
-		values[types.TxValueKeyCodeFormat] = params.CodeFormatEVM
+		values[types.TxValueKeyCodeFormat] = params.CodeFormatEVMConstantinople
 	case types.TxTypeSmartContractExecution:
 		values[types.TxValueKeyNonce] = sender.Nonce
 		values[types.TxValueKeyFrom] = sender.Addr
@@ -448,7 +448,7 @@ func TestDefaultTxsWithDefaultAccountKey(t *testing.T) {
 			types.TxValueKeyGasPrice:      gasPrice,
 			types.TxValueKeyHumanReadable: false,
 			types.TxValueKeyData:          common.FromHex(code),
-			types.TxValueKeyCodeFormat:    params.CodeFormatEVM,
+			types.TxValueKeyCodeFormat:    params.CodeFormatEVMConstantinople,
 		}
 		tx, err := types.NewTransactionWithMap(types.TxTypeSmartContractDeploy, values)
 		assert.Equal(t, nil, err)

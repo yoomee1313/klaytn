@@ -28,7 +28,6 @@ import (
 	"github.com/klaytn/klaytn/blockchain/types/account"
 	"github.com/klaytn/klaytn/common"
 	"github.com/klaytn/klaytn/crypto"
-	"github.com/klaytn/klaytn/params"
 	"github.com/klaytn/klaytn/storage/database"
 	checker "gopkg.in/check.v1"
 )
@@ -99,7 +98,7 @@ func (s *StateSuite) SetUpTest(c *checker.C) {
 
 func (s *StateSuite) TestNull(c *checker.C) {
 	address := common.HexToAddress("0x823140710bf13990e4500136726d8b55")
-	s.state.CreateSmartContractAccount(address, params.CodeFormatEVM)
+	s.state.CreateSmartContractAccount(address, true)
 	//value := common.FromHex("0x823140710bf13990e4500136726d8b55")
 	var value common.Hash
 

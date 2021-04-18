@@ -236,7 +236,7 @@ func deployContractDeployTx(t *testing.T, txpool work.TxPool, chainId *big.Int, 
 		types.TxValueKeyHumanReadable: false,
 		types.TxValueKeyFrom:          sender.GetAddr(),
 		types.TxValueKeyData:          common.FromHex(contractDeployCode),
-		types.TxValueKeyCodeFormat:    params.CodeFormatEVM,
+		types.TxValueKeyCodeFormat:    params.CodeFormatEVMConstantinople,
 		types.TxValueKeyTo:            (*common.Address)(nil),
 	}
 	tx, err := types.NewTransactionWithMap(types.TxTypeSmartContractDeploy, values)

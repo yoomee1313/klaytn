@@ -394,9 +394,9 @@ func (t *TxInternalDataSmartContractDeploy) Execute(sender ContractRef, vm VM, s
 	///////////////////////////////////////////////////////
 	// Sender's nonce will be increased in '`vm.Create()` or `vm.CreateWithAddress()`
 	if t.Recipient == nil {
-		ret, _, usedGas, err = vm.Create(sender, t.Payload, gas, value, t.CodeFormat)
+		ret, _, usedGas, err = vm.Create(sender, t.Payload, gas, value)
 	} else {
-		ret, _, usedGas, err = vm.CreateWithAddress(sender, t.Payload, gas, value, *t.Recipient, t.HumanReadable, t.CodeFormat)
+		ret, _, usedGas, err = vm.CreateWithAddress(sender, t.Payload, gas, value, *t.Recipient, t.HumanReadable)
 	}
 	return ret, usedGas, err
 }

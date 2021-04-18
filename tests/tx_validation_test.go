@@ -155,7 +155,7 @@ func TestValidationPoolInsert(t *testing.T) {
 			types.TxValueKeyGasPrice:      big.NewInt(25 * params.Ston),
 			types.TxValueKeyHumanReadable: false,
 			types.TxValueKeyData:          common.FromHex(code),
-			types.TxValueKeyCodeFormat:    params.CodeFormatEVM,
+			types.TxValueKeyCodeFormat:    params.CodeFormatEVMConstantinople,
 		}
 
 		tx, err := types.NewTransactionWithMap(types.TxTypeSmartContractDeploy, values)
@@ -278,7 +278,7 @@ func TestValidationBlockTx(t *testing.T) {
 			types.TxValueKeyGasPrice:      big.NewInt(25 * params.Ston),
 			types.TxValueKeyHumanReadable: false,
 			types.TxValueKeyData:          common.FromHex(code),
-			types.TxValueKeyCodeFormat:    params.CodeFormatEVM,
+			types.TxValueKeyCodeFormat:    params.CodeFormatEVMConstantinople,
 		}
 
 		tx, err := types.NewTransactionWithMap(types.TxTypeSmartContractDeploy, values)
@@ -451,7 +451,7 @@ func TestValidationInvalidSig(t *testing.T) {
 			types.TxValueKeyGasPrice:      big.NewInt(25 * params.Ston),
 			types.TxValueKeyHumanReadable: false,
 			types.TxValueKeyData:          common.FromHex(code),
-			types.TxValueKeyCodeFormat:    params.CodeFormatEVM,
+			types.TxValueKeyCodeFormat:    params.CodeFormatEVMConstantinople,
 		}
 
 		tx, err := types.NewTransactionWithMap(types.TxTypeSmartContractDeploy, values)
@@ -671,7 +671,7 @@ func TestInvalidBalance(t *testing.T) {
 			types.TxValueKeyGasPrice:      big.NewInt(25 * params.Ston),
 			types.TxValueKeyHumanReadable: false,
 			types.TxValueKeyData:          common.FromHex(code),
-			types.TxValueKeyCodeFormat:    params.CodeFormatEVM,
+			types.TxValueKeyCodeFormat:    params.CodeFormatEVMConstantinople,
 		}
 
 		tx, err := types.NewTransactionWithMap(types.TxTypeSmartContractDeploy, values)
@@ -1063,7 +1063,7 @@ func TestInvalidBalanceBlockTx(t *testing.T) {
 			types.TxValueKeyGasPrice:      big.NewInt(25 * params.Ston),
 			types.TxValueKeyHumanReadable: false,
 			types.TxValueKeyData:          common.FromHex(code),
-			types.TxValueKeyCodeFormat:    params.CodeFormatEVM,
+			types.TxValueKeyCodeFormat:    params.CodeFormatEVMConstantinople,
 		}
 
 		tx, err := types.NewTransactionWithMap(types.TxTypeSmartContractDeploy, values)
@@ -1459,7 +1459,7 @@ func TestValidationTxSizeAfterRLP(t *testing.T) {
 			types.TxValueKeyGasPrice:      big.NewInt(25 * params.Ston),
 			types.TxValueKeyHumanReadable: false,
 			types.TxValueKeyData:          common.FromHex(code),
-			types.TxValueKeyCodeFormat:    params.CodeFormatEVM,
+			types.TxValueKeyCodeFormat:    params.CodeFormatEVMConstantinople,
 		}
 
 		tx, err := types.NewTransactionWithMap(types.TxTypeSmartContractDeploy, values)
@@ -1615,7 +1615,7 @@ func TestValidationPoolResetAfterSenderKeyChange(t *testing.T) {
 			types.TxValueKeyGasPrice:      big.NewInt(0),
 			types.TxValueKeyHumanReadable: false,
 			types.TxValueKeyData:          common.FromHex(code),
-			types.TxValueKeyCodeFormat:    params.CodeFormatEVM,
+			types.TxValueKeyCodeFormat:    params.CodeFormatEVMConstantinople,
 		}
 
 		tx, err := types.NewTransactionWithMap(types.TxTypeSmartContractDeploy, values)
@@ -1760,7 +1760,7 @@ func TestValidationPoolResetAfterFeePayerKeyChange(t *testing.T) {
 			types.TxValueKeyGasPrice:      big.NewInt(25 * params.Ston),
 			types.TxValueKeyHumanReadable: false,
 			types.TxValueKeyData:          common.FromHex(code),
-			types.TxValueKeyCodeFormat:    params.CodeFormatEVM,
+			types.TxValueKeyCodeFormat:    params.CodeFormatEVMConstantinople,
 		}
 
 		tx, err := types.NewTransactionWithMap(types.TxTypeSmartContractDeploy, values)
