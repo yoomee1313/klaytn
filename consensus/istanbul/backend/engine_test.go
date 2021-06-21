@@ -76,9 +76,12 @@ func makeCommittedSeals(hash common.Hash) [][]byte {
 // block by one node. Otherwise, if n is larger than 1, we have to generate
 // other fake events to process Istanbul.
 func newBlockChain(n int, items ...interface{}) (*blockchain.BlockChain, *backend) {
+	// some tests use custom test account
+	var key *ecdsa.PrivateKey
+
 	// generate a genesis block
 	genesis := blockchain.DefaultGenesisBlock()
-	genesis.Config = params.TestChainConfig
+	genesis.Config = &params.ChainConfig{ChainID: big.NewInt(1)}
 	genesis.Timestamp = uint64(time.Now().Unix())
 
 	// force enable Istanbul engine and governance
@@ -98,6 +101,8 @@ func newBlockChain(n int, items ...interface{}) (*blockchain.BlockChain, *backen
 			genesis.Config.Governance.Reward.ProposerUpdateInterval = uint64(v)
 		case governanceMode:
 			genesis.Config.Governance.GovernanceMode = string(v)
+		case *ecdsa.PrivateKey:
+			key = v
 		}
 	}
 	nodeKeys = make([]*ecdsa.PrivateKey, n)
@@ -105,7 +110,7 @@ func newBlockChain(n int, items ...interface{}) (*blockchain.BlockChain, *backen
 
 	var b *backend
 	if len(items) != 0 {
-		b = newTestBackendWithConfig(genesis.Config)
+		b = newTestBackendWithConfig(genesis.Config, key)
 	} else {
 		b = newTestBackend()
 	}
