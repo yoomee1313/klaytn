@@ -214,7 +214,7 @@ func NewPublicDebugAPI(cn *CN) *PublicDebugAPI {
 	return &PublicDebugAPI{cn: cn}
 }
 
-// DumpBlock retrieves the entire state of the database at a given block.
+// =DumpBlock retrieves the entire state of the database at a given block.
 func (api *PublicDebugAPI) DumpBlock(blockNr rpc.BlockNumber) (state.Dump, error) {
 	if blockNr == rpc.PendingBlockNumber {
 		return state.Dump{}, kerrors.ErrPendingBlockNotSupported

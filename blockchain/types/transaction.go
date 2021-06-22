@@ -243,7 +243,7 @@ func (tx *Transaction) Validate(db StateDB, blockNumber uint64) error {
 }
 
 // ValidateMutableValue conducts validation of the sender's account key and additional validation for each transaction type.
-func (tx *Transaction) ValidateMutableValue(db StateDB, signer Signer, currentBlockNumber uint64) error {
+func (tx *Transaction) ValidateMutableValue(db StateDB, signer Signer, currentBlockNumber uint64, isIstanbul bool) error {
 	// validate the sender's account key
 	accKey := db.GetKey(tx.validatedSender)
 	if tx.IsLegacyTransaction() {
@@ -252,7 +252,8 @@ func (tx *Transaction) ValidateMutableValue(db StateDB, signer Signer, currentBl
 		}
 	} else {
 		pubkey, err := SenderPubkey(signer, tx)
-		if err != nil || accountkey.ValidateAccountKey(tx.validatedSender, accKey, pubkey, tx.GetRoleTypeForValidation()) != nil {
+		validateAccountKeyErr, _ := accountkey.ValidateAccountKey(tx.validatedSender, accKey, pubkey, tx.GetRoleTypeForValidation(), isIstanbul)
+		if err != nil || validateAccountKeyErr != nil {
 			return ErrInvalidSigSender
 		}
 	}
@@ -261,7 +262,8 @@ func (tx *Transaction) ValidateMutableValue(db StateDB, signer Signer, currentBl
 	if tx.IsFeeDelegatedTransaction() {
 		feePayerAccKey := db.GetKey(tx.validatedFeePayer)
 		feePayerPubkey, err := SenderFeePayerPubkey(signer, tx)
-		if err != nil || accountkey.ValidateAccountKey(tx.validatedFeePayer, feePayerAccKey, feePayerPubkey, accountkey.RoleFeePayer) != nil {
+		validateAccountKeyErr, _ := accountkey.ValidateAccountKey(tx.validatedFeePayer, feePayerAccKey, feePayerPubkey, accountkey.RoleFeePayer, isIstanbul)
+		if err != nil || validateAccountKeyErr != nil {
 			return ErrInvalidSigFeePayer
 		}
 	}
@@ -414,7 +416,7 @@ func (tx *Transaction) AsMessageWithAccountKeyPicker(s Signer, picker AccountKey
 		return nil, err
 	}
 
-	gasFrom, err := tx.ValidateSender(s, picker, currentBlockNumber)
+	gasFrom, err := tx.ValidateSender(s, picker, currentBlockNumber, r.IsIstanbul)
 	if err != nil {
 		return nil, err
 	}
@@ -423,7 +425,7 @@ func (tx *Transaction) AsMessageWithAccountKeyPicker(s Signer, picker AccountKey
 
 	gasFeePayer := uint64(0)
 	if tx.IsFeeDelegatedTransaction() {
-		gasFeePayer, err = tx.ValidateFeePayer(s, picker, currentBlockNumber)
+		gasFeePayer, err = tx.ValidateFeePayer(s, picker, currentBlockNumber, r.IsIstanbul)
 		if err != nil {
 			return nil, err
 		}
@@ -578,7 +580,7 @@ func (tx *Transaction) String() string {
 
 // ValidateSender finds a sender from both legacy and new types of transactions.
 // It returns the senders address and gas used for the tx validation.
-func (tx *Transaction) ValidateSender(signer Signer, p AccountKeyPicker, currentBlockNumber uint64) (uint64, error) {
+func (tx *Transaction) ValidateSender(signer Signer, p AccountKeyPicker, currentBlockNumber uint64, isIstanbul bool) (uint64, error) {
 	if tx.IsLegacyTransaction() {
 		addr, err := Sender(signer, tx)
 		// Legacy transaction cannot be executed unless the account has a legacy key.
@@ -603,12 +605,13 @@ func (tx *Transaction) ValidateSender(signer Signer, p AccountKeyPicker, current
 	from := txfrom.GetFrom()
 	accKey := p.GetKey(from)
 
-	gasKey, err := accKey.SigValidationGas(currentBlockNumber, tx.GetRoleTypeForValidation())
+	validateAccountKeyErr, validSigNum := accountkey.ValidateAccountKey(from, accKey, pubkey, tx.GetRoleTypeForValidation(), isIstanbul)
+	gasKey, err := accKey.SigValidationGas(currentBlockNumber, tx.GetRoleTypeForValidation(), validSigNum, isIstanbul)
 	if err != nil {
 		return 0, err
 	}
 
-	if err := accountkey.ValidateAccountKey(from, accKey, pubkey, tx.GetRoleTypeForValidation()); err != nil {
+	if validateAccountKeyErr != nil {
 		return 0, ErrInvalidSigSender
 	}
 
@@ -622,7 +625,7 @@ func (tx *Transaction) ValidateSender(signer Signer, p AccountKeyPicker, current
 
 // ValidateFeePayer finds a fee payer from a transaction.
 // If the transaction is not a fee-delegated transaction, it returns an error.
-func (tx *Transaction) ValidateFeePayer(signer Signer, p AccountKeyPicker, currentBlockNumber uint64) (uint64, error) {
+func (tx *Transaction) ValidateFeePayer(signer Signer, p AccountKeyPicker, currentBlockNumber uint64, isIstanbul bool) (uint64, error) {
 	tf, ok := tx.data.(TxInternalDataFeePayer)
 	if !ok {
 		return 0, errUndefinedTxType
@@ -635,13 +638,13 @@ func (tx *Transaction) ValidateFeePayer(signer Signer, p AccountKeyPicker, curre
 
 	feePayer := tf.GetFeePayer()
 	accKey := p.GetKey(feePayer)
-
-	gasKey, err := accKey.SigValidationGas(currentBlockNumber, accountkey.RoleFeePayer)
+	validateAccountKeyErr, validSigNum := accountkey.ValidateAccountKey(feePayer, accKey, pubkey, accountkey.RoleFeePayer, isIstanbul)
+	gasKey, err := accKey.SigValidationGas(currentBlockNumber, accountkey.RoleFeePayer, validSigNum, isIstanbul)
 	if err != nil {
 		return 0, err
 	}
 
-	if err := accountkey.ValidateAccountKey(feePayer, accKey, pubkey, accountkey.RoleFeePayer); err != nil {
+	if validateAccountKeyErr != nil {
 		return 0, ErrInvalidSigFeePayer
 	}
 

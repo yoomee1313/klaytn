@@ -633,8 +633,11 @@ func (pool *TxPool) validateTx(tx *types.Transaction) error {
 		return ErrNegativeValue
 	}
 
+	// Set isIstanbul
+	isIstanbul := pool.chainconfig.IsIstanbul(pool.chain.CurrentBlock().Number())
+
 	// Make sure the transaction is signed properly
-	gasFrom, err := tx.ValidateSender(pool.signer, pool.currentState, pool.currentBlockNumber)
+	gasFrom, err := tx.ValidateSender(pool.signer, pool.currentState, pool.currentBlockNumber, isIstanbul)
 	if err != nil {
 		return err
 	}
@@ -650,7 +653,7 @@ func (pool *TxPool) validateTx(tx *types.Transaction) error {
 	senderBalance := pool.getBalance(from)
 	if tx.IsFeeDelegatedTransaction() {
 		// balance check for fee-delegated tx
-		gasFeePayer, err = tx.ValidateFeePayer(pool.signer, pool.currentState, pool.currentBlockNumber)
+		gasFeePayer, err = tx.ValidateFeePayer(pool.signer, pool.currentState, pool.currentBlockNumber, isIstanbul)
 		if err != nil {
 			return ErrInvalidFeePayer
 		}

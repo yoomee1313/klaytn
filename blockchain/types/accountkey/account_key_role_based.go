@@ -152,11 +152,11 @@ func (a *AccountKeyRoleBased) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-func (a *AccountKeyRoleBased) Validate(r RoleType, recoveredKeys []*ecdsa.PublicKey, from common.Address) bool {
+func (a *AccountKeyRoleBased) Validate(r RoleType, recoveredKeys []*ecdsa.PublicKey, from common.Address, isIstanbul bool) (bool, int) {
 	if len(*a) > int(r) {
-		return (*a)[r].Validate(r, recoveredKeys, from)
+		return (*a)[r].Validate(r, recoveredKeys, from, isIstanbul)
 	}
-	return a.getDefaultKey().Validate(r, recoveredKeys, from)
+	return a.getDefaultKey().Validate(r, recoveredKeys, from, isIstanbul)
 }
 
 func (a *AccountKeyRoleBased) getDefaultKey() AccountKey {
@@ -182,7 +182,7 @@ func (a *AccountKeyRoleBased) AccountCreationGas(currentBlockNumber uint64) (uin
 	return gas, nil
 }
 
-func (a *AccountKeyRoleBased) SigValidationGas(currentBlockNumber uint64, r RoleType) (uint64, error) {
+func (a *AccountKeyRoleBased) SigValidationGas(currentBlockNumber uint64, r RoleType, validSigNum int, isIstanbul bool) (uint64, error) {
 	var key AccountKey
 	// Set the key used to sign for validation.
 	if len(*a) > int(r) {
@@ -191,7 +191,7 @@ func (a *AccountKeyRoleBased) SigValidationGas(currentBlockNumber uint64, r Role
 		key = a.getDefaultKey()
 	}
 
-	gas, err := key.SigValidationGas(currentBlockNumber, r)
+	gas, err := key.SigValidationGas(currentBlockNumber, r, validSigNum, isIstanbul)
 	if err != nil {
 		return 0, err
 	}

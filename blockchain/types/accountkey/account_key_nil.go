@@ -64,9 +64,9 @@ func (a *AccountKeyNil) DecodeRLP(s *rlp.Stream) error {
 	return nil
 }
 
-func (a *AccountKeyNil) Validate(r RoleType, recoveredKeys []*ecdsa.PublicKey, from common.Address) bool {
+func (a *AccountKeyNil) Validate(r RoleType, recoveredKeys []*ecdsa.PublicKey, from common.Address, isIstanbul bool) (bool, int) {
 	logger.ErrorWithStack("this function should not be called. Validation should be done at ValidateSender or ValidateFeePayer")
-	return false
+	return false, 0
 }
 
 func (a *AccountKeyNil) String() string {
@@ -82,7 +82,7 @@ func (a *AccountKeyNil) AccountCreationGas(currentBlockNumber uint64) (uint64, e
 	return 0, nil
 }
 
-func (a *AccountKeyNil) SigValidationGas(currentBlockNumber uint64, r RoleType) (uint64, error) {
+func (a *AccountKeyNil) SigValidationGas(currentBlockNumber uint64, r RoleType, validSigNum int, isIstanbul bool) (uint64, error) {
 	// No gas required to make an account with a nil key.
 	return 0, nil
 }
