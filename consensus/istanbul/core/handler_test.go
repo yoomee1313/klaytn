@@ -17,6 +17,7 @@ import (
 	"github.com/klaytn/klaytn/crypto"
 	"github.com/klaytn/klaytn/crypto/sha3"
 	"github.com/klaytn/klaytn/event"
+	"github.com/klaytn/klaytn/params"
 	"github.com/klaytn/klaytn/rlp"
 	"github.com/stretchr/testify/assert"
 )
@@ -60,6 +61,9 @@ func newMockBackend(t *testing.T, validatorAddrs []common.Address) (*mock_istanb
 	// Set an eventMux in which istanbul core will subscribe istanbul events
 	mockBackend.EXPECT().EventMux().Return(eventMux).AnyTimes()
 
+	// Always return an chainConfig for ChainConfig function
+	mockBackend.EXPECT().ChainConfig().Return(&params.ChainConfig{}).AnyTimes()
+
 	// Just for bypassing an unused function
 	mockBackend.EXPECT().SetCurrentView(gomock.Any()).Return().AnyTimes()
 
@@ -90,7 +94,7 @@ func genValidators(n int) ([]common.Address, map[common.Address]*ecdsa.PrivateKe
 // getRandomValidator selects a validator in the given validator set.
 // `isCommittee` determines whether it returns a committee or a non-committee.
 func getRandomValidator(isCommittee bool, valSet istanbul.ValidatorSet, prevHash common.Hash, view *istanbul.View) istanbul.Validator {
-	committee := valSet.SubList(prevHash, view)
+	committee := valSet.SubList(prevHash, view, true)
 
 	if isCommittee {
 		return committee[rand.Int()%(len(committee)-1)]

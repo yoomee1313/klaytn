@@ -454,7 +454,7 @@ func TestWeightedCouncil_SubListWithProposer(t *testing.T) {
 		testSubSetLen := uint64(i)
 		valSet.SetSubGroupSize(testSubSetLen)
 
-		testSubList := valSet.SubListWithProposer(crypto.Keccak256Hash([]byte("This is a test")), valSet.GetProposer().Address(), view)
+		testSubList := valSet.SubListWithProposer(crypto.Keccak256Hash([]byte("This is a test")), valSet.GetProposer().Address(), view, true)
 		resultSubListLen := len(testSubList)
 
 		if int(testSubSetLen) != resultSubListLen {

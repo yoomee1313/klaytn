@@ -240,7 +240,7 @@ func TestDefaultSet_SubList(t *testing.T) {
 		currentProposer := valSet.GetProposer()
 		assert.Equal(t, testAddresses[i%lenAddress], currentProposer.Address())
 
-		committee := valSet.SubList(hash, view)
+		committee := valSet.SubList(hash, view, true)
 
 		assert.Equal(t, testAddresses[i%lenAddress].String(), committee[0].String())
 		assert.Equal(t, testAddresses[(i+1)%lenAddress].String(), committee[1].String())
