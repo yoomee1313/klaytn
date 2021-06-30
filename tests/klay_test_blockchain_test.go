@@ -71,7 +71,10 @@ type BCData struct {
 var dir = "chaindata"
 var nodeAddr = common.StringToAddress("nodeAddr")
 
-func NewBCData(maxAccounts, numValidators int) (*BCData, error) {
+// a type in order to add a custom configuration of the test chain.
+type istanbulCompatibleBlock *big.Int
+
+func NewBCData(maxAccounts, numValidators int, items ...interface{}) (*BCData, error) {
 	if numValidators > maxAccounts {
 		return nil, errors.New("maxAccounts should be bigger numValidators!!")
 	}
@@ -115,7 +118,11 @@ func NewBCData(maxAccounts, numValidators int) (*BCData, error) {
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Make a blockchain
-	bc, genesis, err := initBlockChain(chainDb, nil, addrs, validatorAddresses, nil, engine)
+	genesis, err := genGenesis(validatorAddresses, items)
+	if err != nil {
+		return nil, err
+	}
+	bc, genesis, err := initBlockChain(chainDb, nil, addrs, validatorAddresses, genesis, engine)
 	if err != nil {
 		return nil, err
 	}
@@ -412,19 +419,40 @@ func prepareIstanbulExtra(validators []common.Address) ([]byte, error) {
 	return append(buf.Bytes(), payload...), nil
 }
 
+// genGenesis generates genesis
+func genGenesis(validators []common.Address, items []interface{}) (*blockchain.Genesis, error) {
+	// default genesis configuration
+	extraData, err := prepareIstanbulExtra(validators)
+	if err != nil {
+		return nil, err
+	}
+	genesis := blockchain.DefaultGenesisBlock()
+	genesis.Config = Forks["Byzantium"]
+	genesis.ExtraData = extraData
+	genesis.BlockScore = big.NewInt(1)
+	genesis.Config.Governance = params.GetDefaultGovernanceConfig(params.UseIstanbul)
+	genesis.Config.Istanbul = params.GetDefaultIstanbulConfig()
+	genesis.Config.UnitPrice = 25 * params.Ston
+
+	// custom genesis configuration
+	for _, item := range items {
+		switch v := item.(type) {
+		case istanbulCompatibleBlock:
+			genesis.Config.IstanbulCompatibleBlock = v
+		}
+	}
+	return genesis, nil
+}
+
 func initBlockChain(db database.DBManager, cacheConfig *blockchain.CacheConfig, coinbaseAddrs []*common.Address, validators []common.Address,
 	genesis *blockchain.Genesis, engine consensus.Engine) (*blockchain.BlockChain, *blockchain.Genesis, error) {
-
-	extraData, err := prepareIstanbulExtra(validators)
+	var err error
 
 	if genesis == nil {
-		genesis = blockchain.DefaultGenesisBlock()
-		genesis.Config = Forks["Byzantium"]
-		genesis.ExtraData = extraData
-		genesis.BlockScore = big.NewInt(1)
-		genesis.Config.Governance = params.GetDefaultGovernanceConfig(params.UseIstanbul)
-		genesis.Config.Istanbul = params.GetDefaultIstanbulConfig()
-		genesis.Config.UnitPrice = 25 * params.Ston
+		genesis, err = genGenesis(validators, nil)
+		if err != nil {
+			return nil, nil, err
+		}
 	}
 
 	alloc := make(blockchain.GenesisAlloc)

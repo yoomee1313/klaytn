@@ -47,7 +47,7 @@ func NewAccountKeyWeightedMultiSig() *AccountKeyWeightedMultiSig {
 	return &AccountKeyWeightedMultiSig{}
 }
 
-func NewAccountKeyWeightedMultiSigWithValues(threshold uint, keys WeightedPublicKeys, validSigNum int) *AccountKeyWeightedMultiSig {
+func NewAccountKeyWeightedMultiSigWithValues(threshold uint, keys WeightedPublicKeys) *AccountKeyWeightedMultiSig {
 	return &AccountKeyWeightedMultiSig{threshold, keys}
 }
 
