@@ -75,8 +75,16 @@ func (a *AccountKeyWeightedMultiSig) Equal(b AccountKey) bool {
 		a.Keys.Equal(tb.Keys)
 }
 
-// Validate returns validation result (bool) and key number (int)
+// Validate returns validation result (bool) and valid&unique signature number (int)
 func (a *AccountKeyWeightedMultiSig) Validate(r RoleType, recoveredKeys []*ecdsa.PublicKey, from common.Address, isIstanbul bool) (bool, int) {
+	// if isIstanbul is true, check whether the signature number exceeds key number
+	if isIstanbul && len(recoveredKeys) > len(a.Keys) {
+		logger.Debug("AccountKeyWeightedMultiSig validation failed and signature number(recoveredKeys) exceeds key number",
+			"sigNum", len(recoveredKeys), "keyNum", len(a.Keys))
+		return false, 0
+	}
+
+	validSigNum := 0
 	weightedSum := uint(0)
 
 	// To prohibit making a signature with the same key, make a map.
@@ -98,19 +106,29 @@ func (a *AccountKeyWeightedMultiSig) Validate(r RoleType, recoveredKeys []*ecdsa
 			continue
 		}
 
+		// if the registered key is included in one of the transaction signatures,
+		// update weightedSum and validSigNum
 		if _, ok := pMap[string(b)]; ok {
 			weightedSum += k.Weight
+			validSigNum++
 		}
 	}
 
-	if weightedSum >= a.Threshold {
-		return true, len(a.Keys)
+	// if isIstanbul is true, check whether invalid signature exists
+	if isIstanbul && validSigNum < len(pMap) {
+		logger.Debug("AccountKeyWeightedMultiSig validation failed and invalid signature exists",
+			"validSigNum", validSigNum, "uniqueSigNum", len(pMap))
+		return false, 0
 	}
 
-	logger.Debug("AccountKeyWeightedMultiSig validation is failed", "recoveredKeys", recoveredKeys,
-		"accountKeys", a.String(), "threshold", a.Threshold, "weighted sum", weightedSum)
+	// check whether enough signatures are gathered
+	if weightedSum < a.Threshold {
+		logger.Debug("AccountKeyWeightedMultiSig validation failed and weightedSum is smaller than threshold",
+			"recoveredKeys", recoveredKeys, "accountKeys", a.String(), "threshold", a.Threshold, "weighted sum", weightedSum)
+		return false, 0
+	}
 
-	return false, len(a.Keys)
+	return true, validSigNum
 }
 
 func (a *AccountKeyWeightedMultiSig) String() string {
@@ -139,7 +157,12 @@ func (a *AccountKeyWeightedMultiSig) SigValidationGas(currentBlockNumber uint64,
 		logger.Error("should not happen! numKeys is equal to zero!")
 		return 0, kerrors.ErrZeroLength
 	}
-	return (numKeys - 1) * params.TxValidationGasPerKey, nil
+
+	if isIstanbul {
+		return uint64(validSigNum-1) * params.TxValidationGasPerKey, nil
+	} else {
+		return (numKeys - 1) * params.TxValidationGasPerKey, nil
+	}
 }
 
 func (a *AccountKeyWeightedMultiSig) CheckInstallable(currentBlockNumber uint64) error {
