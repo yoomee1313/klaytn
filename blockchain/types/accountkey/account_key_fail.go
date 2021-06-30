@@ -49,9 +49,9 @@ func (a *AccountKeyFail) Equal(b AccountKey) bool {
 	return false
 }
 
-func (a *AccountKeyFail) Validate(r RoleType, recoveredKeys []*ecdsa.PublicKey, from common.Address) bool {
+func (a *AccountKeyFail) Validate(r RoleType, recoveredKeys []*ecdsa.PublicKey, from common.Address, isIstanbul bool) (bool, int) {
 	// This type of account key always fails to validate.
-	return false
+	return false, 0
 }
 
 func (a *AccountKeyFail) String() string {
@@ -67,7 +67,7 @@ func (a *AccountKeyFail) AccountCreationGas(currentBlockNumber uint64) (uint64, 
 	return 0, nil
 }
 
-func (a *AccountKeyFail) SigValidationGas(currentBlockNumber uint64, r RoleType) (uint64, error) {
+func (a *AccountKeyFail) SigValidationGas(currentBlockNumber uint64, r RoleType, validSigNum int, isIstanbul bool) (uint64, error) {
 	// No gas required to make an account with a failed key.
 	return 0, nil
 }

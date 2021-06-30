@@ -75,7 +75,8 @@ func (a *AccountKeyWeightedMultiSig) Equal(b AccountKey) bool {
 		a.Keys.Equal(tb.Keys)
 }
 
-func (a *AccountKeyWeightedMultiSig) Validate(r RoleType, recoveredKeys []*ecdsa.PublicKey, from common.Address) bool {
+// Validate returns validation result (bool) and key number (int)
+func (a *AccountKeyWeightedMultiSig) Validate(r RoleType, recoveredKeys []*ecdsa.PublicKey, from common.Address, isIstanbul bool) (bool, int) {
 	weightedSum := uint(0)
 
 	// To prohibit making a signature with the same key, make a map.
@@ -103,13 +104,13 @@ func (a *AccountKeyWeightedMultiSig) Validate(r RoleType, recoveredKeys []*ecdsa
 	}
 
 	if weightedSum >= a.Threshold {
-		return true
+		return true, len(a.Keys)
 	}
 
 	logger.Debug("AccountKeyWeightedMultiSig validation is failed", "recoveredKeys", recoveredKeys,
 		"accountKeys", a.String(), "threshold", a.Threshold, "weighted sum", weightedSum)
 
-	return false
+	return false, len(a.Keys)
 }
 
 func (a *AccountKeyWeightedMultiSig) String() string {
@@ -127,7 +128,7 @@ func (a *AccountKeyWeightedMultiSig) AccountCreationGas(currentBlockNumber uint6
 	return numKeys * params.TxAccountCreationGasPerKey, nil
 }
 
-func (a *AccountKeyWeightedMultiSig) SigValidationGas(currentBlockNumber uint64, r RoleType) (uint64, error) {
+func (a *AccountKeyWeightedMultiSig) SigValidationGas(currentBlockNumber uint64, r RoleType, validSigNum int, isIstanbul bool) (uint64, error) {
 	numKeys := uint64(len(a.Keys))
 	if numKeys > MaxNumKeysForMultiSig {
 		logger.Warn("validation failed due to the number of keys in the account is larger than the limit.",
