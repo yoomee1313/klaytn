@@ -111,7 +111,7 @@ func (a *AccountMap) Update(txs types.Transactions, signer types.Signer, picker 
 		to := tx.To()
 		v := tx.Value()
 
-		gasFrom, err := tx.ValidateSender(signer, picker, currentBlockNumber)
+		gasFrom, err := tx.ValidateSender(signer, picker, currentBlockNumber, r.IsIstanbul)
 		if err != nil {
 			return err
 		}
@@ -120,7 +120,7 @@ func (a *AccountMap) Update(txs types.Transactions, signer types.Signer, picker 
 		gasFeePayer := uint64(0)
 		feePayer := from
 		if tx.IsFeeDelegatedTransaction() {
-			gasFeePayer, err = tx.ValidateFeePayer(signer, picker, currentBlockNumber)
+			gasFeePayer, err = tx.ValidateFeePayer(signer, picker, currentBlockNumber, r.IsIstanbul)
 			if err != nil {
 				return err
 			}
