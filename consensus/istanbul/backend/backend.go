@@ -171,7 +171,7 @@ func (sb *backend) Broadcast(prevHash common.Hash, valSet istanbul.ValidatorSet,
 	return nil
 }
 
-// Broadcast implements istanbul.Backend.Gossip
+// Gossip implements istanbul.Backend.Gossip
 func (sb *backend) Gossip(valSet istanbul.ValidatorSet, payload []byte) error {
 	hash := istanbul.RLPHash(payload)
 	sb.knownMessages.Add(hash, true)
@@ -229,6 +229,11 @@ func (sb *backend) getTargetReceivers(prevHash common.Hash, valSet istanbul.Vali
 	proposer := valSet.GetProposer()
 	for i := 0; i < 2; i++ {
 		committee := valSet.SubListWithProposer(prevHash, proposer.Address(), view, sb.chain.Config().IsIstanbul(view.Sequence))
+		if i == 0 {
+			logger.Info("[COMMITTEE]", "sequence", view.Sequence, "round", view.Round, "curr committee", committee)
+		} else {
+			logger.Info("[COMMITTEE]", "sequence", view.Sequence, "round", view.Round, "next committee", committee)
+		}
 		for _, val := range committee {
 			if val.Address() != sb.Address() {
 				targets[val.Address()] = true

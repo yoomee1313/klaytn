@@ -21,6 +21,7 @@
 package core
 
 import (
+	"math/big"
 	"reflect"
 
 	"github.com/klaytn/klaytn/consensus/istanbul"
@@ -61,6 +62,20 @@ func (c *core) handlePrepare(msg *message, src istanbul.Validator) error {
 	//logger.Error("call receive prepare","num",prepare.View.Sequence)
 	if err := c.checkMessage(msgPrepare, prepare.View); err != nil {
 		return err
+	}
+
+	// this is for round-change test
+	myNodeIdx, blockNum, validatorLength := uint64(0), prepare.View.Sequence.Uint64(), uint64(len(c.valSet.List()))
+	for idx, validator := range c.valSet.List() {
+		if validator.Address() == c.Address() {
+			myNodeIdx = uint64(idx)
+		}
+	}
+	condition1 := blockNum < 3700 && blockNum%10 == 0
+	condition2 := (blockNum%validatorLength)%2 == myNodeIdx%2
+	condition3 := prepare.View.Round.Cmp(big.NewInt(5)) == -1
+	if condition1 && condition2 && condition3 {
+		return nil
 	}
 
 	// If it is locked, it can only process on the locked block.
